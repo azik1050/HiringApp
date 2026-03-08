@@ -1,7 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
 from src.app.routers import (
-    user_router
+    user_router,
+    candidate_account_router
 )
 from src.core.database.database_helper import DataBase
 
@@ -12,6 +13,7 @@ app = FastAPI(
 )
 
 app.include_router(user_router.router)
+app.include_router(candidate_account_router.router)
 
 
 if __name__ == "__main__":

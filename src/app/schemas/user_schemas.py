@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field
 
 
@@ -12,3 +13,18 @@ class FullUpdateUserRequest(CreateUserRequest):
 class CreateUserResponse(BaseModel):
     id: int
     name: str
+
+
+class User(BaseModel):
+    id: int
+    name: str
+
+
+class GetUsersResponse(BaseModel):
+    data: list[User]
+
+
+class GetUserResponse(BaseModel):
+    id: int
+    name: str
+    candidate_account_id: Optional[int]

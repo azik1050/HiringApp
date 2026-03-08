@@ -22,7 +22,7 @@ class CVModel(Base):
     candidate: Mapped["CandidateAccountModel"] = relationship(
         back_populates="cvs"
     )
-    candidate_id: Mapped[int] = mapped_column(
+    candidate_account_id: Mapped[int] = mapped_column(
         ForeignKey("candidate_accounts.id")
     )
     title: Mapped[str] = mapped_column(
