@@ -25,6 +25,9 @@ class CVModel(Base):
     candidate_account_id: Mapped[int] = mapped_column(
         ForeignKey("candidate_accounts.id")
     )
+    job_applications: Mapped[list["JobApplicationModel"]] = relationship(
+        back_populates="cv"
+    )
     title: Mapped[str] = mapped_column(
         String(250)
     )

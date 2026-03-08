@@ -31,12 +31,11 @@ class CandidateAccountService:
             cv: CreateCVRequest,
             db: AsyncSession
     ) -> CreateCVResponse:
-        created_cv = await CVRepository.create_cv(cv, db)
+        created_cv = await CVRepository.create_cv(cv=cv, db=db)
+
         return CreateCVResponse(
             id=created_cv.id,
             candidate_account_id=created_cv.candidate_account_id,
             title=created_cv.title,
             content=created_cv.content
         )
-
-
