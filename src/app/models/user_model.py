@@ -14,12 +14,14 @@ class UserModel(Base):
         primary_key=True,
         autoincrement=True
     )
-    name: Mapped[str] = mapped_column(
-        String(30)
-    )
+    name: Mapped[str] = mapped_column(String(30))
     candidate_account: Mapped[Optional["CandidateAccountModel"]] = relationship(
         "CandidateAccountModel",
         back_populates="user"
+    )
+    company_account: Mapped["CompanyAccountModel"] = relationship(
+        "CompanyAccountModel",
+        back_populates="owner"
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

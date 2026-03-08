@@ -8,7 +8,7 @@ from src.app.schemas.cv_schemas import (
     CreateCVRequest,
     CreateCVResponse
 )
-from src.app.services.candidate_account_service import CandidateAccountService
+from src.app.services.candidate_service import CandidateAccountService
 from src.core.database.database_helper import DataBase
 
 router = APIRouter(prefix="/candidate_account", tags=["Candidate Account Controller"])
