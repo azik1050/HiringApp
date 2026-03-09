@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.cv_repository import CVRepository
@@ -17,10 +19,14 @@ class CandidateAccountService:
             candidate_account: CreateCandidateAccountRequest,
             db: AsyncSession
     ) -> CreateCandidateAccountResponse:
-        candidate = await CandidateAccountRepository.create_candidate_account(
-            candidate=candidate_account,
-            db=db
-        )
+        try:
+            candidate = await CandidateAccountRepository.create_candidate_account(
+                candidate=candidate_account,
+                db=db
+            )
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="Account already exists")
+
         return CreateCandidateAccountResponse(
             id=candidate.id,
             user_id=candidate.user_id

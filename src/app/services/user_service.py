@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.user_repository import UserRepository
@@ -56,7 +57,10 @@ class UserService:
             user: CreateUserRequest,
             db: AsyncSession
     ) -> CreateUserResponse:
-        created_user = await UserRepository.create_user(user, db)
+        try:
+            created_user = await UserRepository.create_user(user, db)
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="User already exists")
         return CreateUserResponse(id=created_user.id, name=created_user.name)
 
     async def delete_user(
