@@ -26,6 +26,20 @@ class UserRepository:
         return result.scalar_one_or_none()
 
     @staticmethod
+    async def get_user_by_name(
+            name: str,
+            db: AsyncSession
+    ) -> Optional[UserModel]:
+        query = (
+            select(UserModel)
+            .where(UserModel.name == name)
+        )
+
+        result = await db.execute(query)
+
+        return result.scalar_one_or_none()
+
+    @staticmethod
     async def get_users(
             db: AsyncSession
     ) -> List[UserModel]:
@@ -46,7 +60,8 @@ class UserRepository:
             db: AsyncSession
     ) -> UserModel:
         user = UserModel(
-            name=user.name
+            name=user.name,
+            password=user.password
         )
 
         db.add(user)

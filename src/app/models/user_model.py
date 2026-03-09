@@ -1,4 +1,6 @@
 from typing import Optional
+
+from pydantic import SecretStr
 from sqlalchemy import Integer, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
@@ -14,7 +16,8 @@ class UserModel(Base):
         primary_key=True,
         autoincrement=True
     )
-    name: Mapped[str] = mapped_column(String(30))
+    name: Mapped[str] = mapped_column(String(30), unique=True)
+    password: Mapped[SecretStr] = mapped_column(String(30))
     candidate_account: Mapped[Optional["CandidateAccountModel"]] = relationship(
         "CandidateAccountModel",
         back_populates="user"
