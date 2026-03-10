@@ -1,5 +1,7 @@
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.app.schemas.user_schemas import CreateUserRequest
 from src.core.auth.security import security
 from src.app.repositories.user_repository import UserRepository
 from src.app.schemas.auth_schemas import (
@@ -9,6 +11,21 @@ from src.app.schemas.auth_schemas import (
 
 
 class AuthService:
+    async def register(
+            self,
+            user: CreateUserRequest,
+            db: AsyncSession
+    ):
+        try:
+            user = await UserRepository.create_user(
+                user=user,
+                db=db
+            )
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="User already exists")
+
+        return user
+
     async def login(
             self,
             creds: LoginRequest,

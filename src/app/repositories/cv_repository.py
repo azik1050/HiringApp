@@ -6,11 +6,12 @@ from src.app.schemas.cv_schemas import CreateCVRequest
 class CVRepository:
     @staticmethod
     async def create_cv(
+            candidate_account_id: int,
             cv: CreateCVRequest,
             db: AsyncSession
     ) -> CVModel:
         new_cv = CVModel(
-            candidate_account_id=cv.candidate_account_id,
+            candidate_account_id=candidate_account_id,
             title=cv.title,
             content=cv.content
         )

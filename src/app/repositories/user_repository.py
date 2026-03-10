@@ -1,13 +1,9 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
+from src.app.models import CandidateAccountModel, CompanyAccountModel
 from src.app.models.user_model import UserModel
-from src.app.schemas.user_schemas import (
-    CreateUserRequest,
-    CreateUserResponse,
-    GetUsersResponse,
-    User
-)
-from sqlalchemy import delete, select
+from src.app.schemas.user_schemas import CreateUserRequest
+from sqlalchemy import delete, select, Row, MappingResult
 
 
 class UserRepository:
@@ -82,3 +78,25 @@ class UserRepository:
 
         await db.execute(query)
         await db.commit()
+
+    @staticmethod
+    async def get_full_user_info(
+            id: int,
+            db: AsyncSession
+    ) -> Optional[MappingResult]:
+        query = (
+            select(
+                UserModel.id,
+                UserModel.name,
+                CandidateAccountModel.id.label("candidate_account_id"),
+                CompanyAccountModel.id.label("company_account_id")
+            )
+            .where(UserModel.id == id)
+            .outerjoin(CandidateAccountModel, CandidateAccountModel.user_id == UserModel.id)
+            .outerjoin(CompanyAccountModel, CompanyAccountModel.owner_id == UserModel.id)
+        )
+
+        result = await db.execute(query)
+
+        return result.mappings().one_or_none()
+

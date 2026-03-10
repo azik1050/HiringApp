@@ -1,3 +1,4 @@
+from authx import TokenPayload
 from fastapi import APIRouter
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,9 +26,11 @@ service = CompanyService()
 )
 async def create_company_account(
         company: CreateCompanyAccountRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        db: AsyncSession = Depends(DataBase.get_db),
+        token: TokenPayload = Depends(security.access_token_required)
 ):
     return await service.create_company(
+        user_id=int(token.sub),
         company=company,
         db=db
     )
@@ -41,9 +44,11 @@ async def create_company_account(
 )
 async def create_vacancy(
         vacancy: CreateVacancyRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        db: AsyncSession = Depends(DataBase.get_db),
+        token: TokenPayload = Depends(security.access_token_required)
 ):
     return await service.create_vacancy(
+        user_id=int(token.sub),
         vacancy=vacancy,
         db=db
     )
