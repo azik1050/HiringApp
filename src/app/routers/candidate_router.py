@@ -1,8 +1,8 @@
+from authx import TokenPayload
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.schemas.candidate_account_schemas import (
-    CreateCandidateAccountResponse,
-    CreateCandidateAccountRequest
+    CreateCandidateAccountResponse
 )
 from src.app.schemas.cv_schemas import (
     CreateCVRequest,
@@ -23,11 +23,11 @@ service = CandidateAccountService()
     dependencies=[Depends(security.access_token_required)]
 )
 async def create_candidate_account(
-        candidate_account: CreateCandidateAccountRequest,
+        token: TokenPayload = Depends(security.access_token_required),
         db: AsyncSession = Depends(DataBase.get_db)
 ):
     return await service.create_candidate_account(
-        candidate_account=candidate_account,
+        user_id=int(token.sub),
         db=db
     )
 
@@ -40,6 +40,11 @@ async def create_candidate_account(
 )
 async def create_cv(
         cv: CreateCVRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        db: AsyncSession = Depends(DataBase.get_db),
+        token: TokenPayload = Depends(security.access_token_required)
 ):
-    return await service.create_cv(cv=cv, db=db)
+    return await service.create_cv(
+        user_id=int(token.sub),
+        cv=cv,
+        db=db
+    )

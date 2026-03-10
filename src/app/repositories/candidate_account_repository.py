@@ -7,26 +7,30 @@ from sqlalchemy import select
 
 class CandidateAccountRepository:
     @staticmethod
-    async def get_candidate_account(
+    async def get_candidate_account_id(
             user_id: int,
             db: AsyncSession
     ) -> Optional[CandidateAccountModel.id]:
         query = (
-            select(CandidateAccountModel.id)
-            .where(CandidateAccountModel.user_id == user_id)
+            select(
+                CandidateAccountModel.id.label("id")
+            )
+            .where(
+                CandidateAccountModel.user_id == user_id
+            )
         )
 
         result = await db.execute(query)
 
-        return result.scalar_one_or_none()
+        return result.mappings().one_or_none()
 
     @staticmethod
     async def create_candidate_account(
-            candidate: CreateCandidateAccountRequest,
+            user_id: int,
             db: AsyncSession
     ) -> CandidateAccountModel:
         candidate_account = CandidateAccountModel(
-            user_id=candidate.user_id
+            user_id=user_id
         )
         db.add(candidate_account)
 

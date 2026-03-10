@@ -29,3 +29,4 @@ class GetUserResponse(BaseModel):
     id: int
     name: str
     candidate_account_id: Optional[int]
+    company_account_id: Optional[int]

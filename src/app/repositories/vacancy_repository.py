@@ -6,11 +6,12 @@ from src.app.schemas.vacancy_schemas import CreateVacancyRequest
 class VacancyRepository:
     @staticmethod
     async def create_vacancy(
+            company_id: int,
             vacancy: CreateVacancyRequest,
             db: AsyncSession
     ) -> VacancyModel:
         new_vacancy = VacancyModel(
-            company_id=vacancy.company_id,
+            company_id=company_id,
             title=vacancy.title,
             description=vacancy.description
         )

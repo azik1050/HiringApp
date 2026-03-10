@@ -18,24 +18,21 @@ class UserService:
             user_id: int,
             db: AsyncSession
     ) -> GetUserResponse:
-        user = await UserRepository.get_user(
-            user_id=user_id,
+        user = await UserRepository.get_full_user_info(
+            id=user_id,
             db=db
         )
 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
-        candidate_account_id = await CandidateAccountRepository.get_candidate_account(
-            user_id=user_id,
-            db=db
-        )
-
-        return GetUserResponse(
-            id=user.id,
-            name=user.name,
-            candidate_account_id=candidate_account_id
-        )
+        return GetUserResponse(**user)
+        # return GetUserResponse(
+        #     id=user.id,
+        #     name=user.name,
+        #     candidate_account_id=user.candidate_account_id,
+        #     company_account_id=user.company_account_id
+        # )
 
     async def get_users(
             self,
