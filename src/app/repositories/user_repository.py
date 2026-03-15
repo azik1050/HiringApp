@@ -1,88 +1,71 @@
 from typing import List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.models import CandidateAccountModel, CompanyAccountModel
 from src.app.models.user_model import UserModel
-from src.app.schemas.user_schemas import CreateUserRequest
-from sqlalchemy import delete, select, Row, MappingResult
+from src.app.schemas.create_user_schemas import CreateUserRequest
+from sqlalchemy import delete, select, MappingResult
+from src.core.base_classes.repository import BaseRepository
 
 
-class UserRepository:
-    @staticmethod
+class UserRepository(BaseRepository):
+    """Class for interaction with users table"""
     async def get_user(
-            user_id: int,
-            db: AsyncSession
+            self,
+            user_id: int
     ) -> Optional[UserModel]:
         query = (
             select(UserModel)
             .where(UserModel.id == user_id)
         )
 
-        result = await db.execute(query)
+        return await self._find_one(query)
 
-        return result.scalar_one_or_none()
-
-    @staticmethod
     async def get_user_by_name(
-            name: str,
-            db: AsyncSession
+            self,
+            name: str
     ) -> Optional[UserModel]:
         query = (
             select(UserModel)
             .where(UserModel.name == name)
         )
 
-        result = await db.execute(query)
+        return await self._find_one(query)
 
-        return result.scalar_one_or_none()
-
-    @staticmethod
     async def get_users(
-            db: AsyncSession
+            self
     ) -> List[UserModel]:
         query = (
             select(UserModel)
             .order_by(UserModel.id)
         )
 
-        result = await db.execute(query)
+        return await self._find_all(query)
 
-        return [
-            user for user in result.scalars().all()
-        ]
-
-    @staticmethod
     async def create_user(
-            user: CreateUserRequest,
-            db: AsyncSession
+            self,
+            user: CreateUserRequest
     ) -> UserModel:
         user = UserModel(
             name=user.name,
             password=user.password
         )
 
-        db.add(user)
-        await db.commit()
-        await db.refresh(user)
+        return await self._add(user)
 
-        return user
-
-    @staticmethod
     async def delete_user(
-            id: int,
-            db: AsyncSession
+            self,
+            id: int
     ) -> None:
         query = (
             delete(UserModel)
             .where(UserModel.id == id)
         )
 
-        await db.execute(query)
-        await db.commit()
+        await self._session.execute(query)
+        await self._session.commit()
 
-    @staticmethod
     async def get_full_user_info(
-            id: int,
-            db: AsyncSession
+            self,
+            id: int
     ) -> Optional[MappingResult]:
         query = (
             select(
@@ -96,7 +79,5 @@ class UserRepository:
             .outerjoin(CompanyAccountModel, CompanyAccountModel.owner_id == UserModel.id)
         )
 
-        result = await db.execute(query)
-
-        return result.mappings().one_or_none()
+        return await self._find_one_labeled(query)
 

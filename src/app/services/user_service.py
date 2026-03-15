@@ -1,9 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.user_repository import UserRepository
-from src.app.schemas.user_schemas import (
+from src.app.schemas.create_user_schemas import (
     CreateUserRequest,
     GetUsersResponse,
     User,
@@ -13,32 +11,27 @@ from src.app.schemas.user_schemas import (
 
 
 class UserService:
+    def __init__(self, user_repo: UserRepository):
+        self.user_repo = user_repo
+
     async def get_user(
             self,
-            user_id: int,
-            db: AsyncSession
+            user_id: int
     ) -> GetUserResponse:
-        user = await UserRepository.get_full_user_info(
-            id=user_id,
-            db=db
+        user = await self.user_repo.get_full_user_info(
+            id=user_id
         )
 
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
 
         return GetUserResponse(**user)
-        # return GetUserResponse(
-        #     id=user.id,
-        #     name=user.name,
-        #     candidate_account_id=user.candidate_account_id,
-        #     company_account_id=user.company_account_id
-        # )
 
     async def get_users(
-            self,
-            db: AsyncSession
+            self
     ) -> GetUsersResponse:
-        users = await UserRepository.get_users(db)
+        users = await self.user_repo.get_users()
+
         return GetUsersResponse(
             data=[
                 User(
@@ -51,19 +44,17 @@ class UserService:
 
     async def create_user(
             self,
-            user: CreateUserRequest,
-            db: AsyncSession
+            user: CreateUserRequest
     ) -> CreateUserResponse:
         try:
-            created_user = await UserRepository.create_user(user, db)
+            created_user = await self.user_repo.create_user(user)
         except IntegrityError:
             raise HTTPException(status_code=400, detail="User already exists")
         return CreateUserResponse(id=created_user.id, name=created_user.name)
 
     async def delete_user(
             self,
-            id: int,
-            db: AsyncSession
+            id: int
     ) -> dict:
-        await UserRepository.delete_user(id, db)
+        await self.user_repo.delete_user(id)
         return {}

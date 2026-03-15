@@ -1,16 +1,14 @@
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
+from src.app.dependencies.services import build_auth_service
 from src.app.schemas.auth_schemas import (
     LoginRequest,
     LoginResponse, RegisterRequest
 )
-from src.app.schemas.user_schemas import CreateUserRequest
+from src.app.schemas.create_user_schemas import CreateUserRequest
 from src.app.services.auth_service import AuthService
-from src.core.database.database_helper import DataBase
 
 
 router = APIRouter(prefix="/auth", tags=["Auth Controller"])
-service = AuthService()
 
 
 @router.post(
@@ -20,9 +18,9 @@ service = AuthService()
 )
 async def login(
         creds: LoginRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        auth_service: AuthService = Depends(build_auth_service)
 ):
-    return await service.login(creds=creds, db=db)
+    return await auth_service.login(creds=creds)
 
 
 @router.post(
@@ -32,6 +30,6 @@ async def login(
 )
 async def register(
         user: CreateUserRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        auth_service: AuthService = Depends(build_auth_service)
 ):
-    return await service.register(user=user, db=db)
+    return await auth_service.register(user=user)

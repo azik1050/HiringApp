@@ -7,11 +7,12 @@ ENV_PATH = (Path().parent.parent.parent.parent / '.env').resolve()
 
 
 class DevAuthConfig(BaseSettings):
+    """Auth config"""
     jwt_secret_key: SecretStr
     jwt_access_token_expires: int = Field(default=3600)
 
     model_config = SettingsConfigDict(
-        env_prefix="DEV_AUTH_",
+        env_prefix="AUTH_",
         env_file=ENV_PATH,
         extra="ignore"
     )
@@ -26,6 +27,7 @@ class DevAuthConfig(BaseSettings):
 
 
 class DevDBConfig(BaseSettings):
+    """Database connection config"""
     name: str
     username: str
     password: SecretStr
@@ -34,6 +36,6 @@ class DevDBConfig(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
-        env_prefix="DEV_DB_",
+        env_prefix="DB_",
         extra="ignore"
     )

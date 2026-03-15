@@ -1,19 +1,17 @@
 from authx import TokenPayload
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.app.schemas.candidate_account_schemas import (
+from src.app.dependencies.services import build_candidate_service
+from src.app.schemas.create_candidate_account_schemas import (
     CreateCandidateAccountResponse
 )
-from src.app.schemas.cv_schemas import (
+from src.app.schemas.create_cv_schemas import (
     CreateCVRequest,
     CreateCVResponse
 )
 from src.app.services.candidate_service import CandidateAccountService
 from src.core.auth.security import security
-from src.core.database.database_helper import DataBase
 
 router = APIRouter(prefix="/candidate-account", tags=["Candidate Account Controller"])
-service = CandidateAccountService()
 
 
 @router.post(
@@ -24,11 +22,10 @@ service = CandidateAccountService()
 )
 async def create_candidate_account(
         token: TokenPayload = Depends(security.access_token_required),
-        db: AsyncSession = Depends(DataBase.get_db)
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
 ):
-    return await service.create_candidate_account(
-        user_id=int(token.sub),
-        db=db
+    return await candidate_service.create_candidate_account(
+        user_id=int(token.sub)
     )
 
 
@@ -40,11 +37,20 @@ async def create_candidate_account(
 )
 async def create_cv(
         cv: CreateCVRequest,
-        db: AsyncSession = Depends(DataBase.get_db),
-        token: TokenPayload = Depends(security.access_token_required)
+        token: TokenPayload = Depends(security.access_token_required),
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
 ):
-    return await service.create_cv(
+    return await candidate_service.create_cv(
         user_id=int(token.sub),
-        cv=cv,
-        db=db
+        cv=cv
+    )
+
+
+@router.get('/info/')
+async def get_candidate_account_info(
+        token: TokenPayload = Depends(security.access_token_required),
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
+):
+    return await candidate_service.get_candidate_account_info(
+        user_id=int(token.sub)
     )

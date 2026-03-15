@@ -1,14 +1,14 @@
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 from src.app.models import CVModel
-from src.app.schemas.cv_schemas import CreateCVRequest
+from src.app.schemas.create_cv_schemas import CreateCVRequest
+from src.core.base_classes.repository import BaseRepository
 
 
-class CVRepository:
-    @staticmethod
+class CVRepository(BaseRepository):
     async def create_cv(
+            self,
             candidate_account_id: int,
-            cv: CreateCVRequest,
-            db: AsyncSession
+            cv: CreateCVRequest
     ) -> CVModel:
         new_cv = CVModel(
             candidate_account_id=candidate_account_id,
@@ -16,8 +16,16 @@ class CVRepository:
             content=cv.content
         )
 
-        db.add(new_cv)
-        await db.commit()
-        await db.refresh(new_cv)
+        return await self._add(new_cv)
 
-        return new_cv
+    async def get_cvs(
+            self,
+            candidate_account_id: int,
+    ) -> list[CVModel]:
+        query = (
+            select(CVModel)
+            .where(CVModel.candidate_account_id == candidate_account_id)
+            .order_by(CVModel.updated_at.desc())
+        )
+
+        return await self._find_all(query)

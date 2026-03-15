@@ -1,17 +1,14 @@
-from fastapi import HTTPException
 from typing import Optional
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, MappingResult
 from src.app.models.company_account_model import CompanyAccountModel
-from src.app.schemas.company_account_schemas import CreateCompanyAccountRequest
+from src.app.schemas.create_company_account_schemas import CreateCompanyAccountRequest
+from src.core.base_classes.repository import BaseRepository
 
 
-class CompanyAccountRepository:
-    @staticmethod
+class CompanyAccountRepository(BaseRepository):
     async def get_company_id_by_user_id(
-            user_id: int,
-            db: AsyncSession
+            self,
+            user_id: int
     ) -> Optional[MappingResult]:
         query = (
             select(
@@ -22,15 +19,12 @@ class CompanyAccountRepository:
             )
         )
 
-        result = await db.execute(query)
+        return await self._find_one_labeled(query)
 
-        return result.mappings().one_or_none()
-
-    @staticmethod
     async def create_company_account(
+            self,
             user_id: int,
-            company: CreateCompanyAccountRequest,
-            db: AsyncSession
+            company: CreateCompanyAccountRequest
     ) -> CompanyAccountModel:
         new_company = CompanyAccountModel(
             name=company.name,
@@ -39,8 +33,4 @@ class CompanyAccountRepository:
             owner_id=user_id
         )
 
-        db.add(new_company)
-        await db.commit()
-        await db.refresh(new_company)
-
-        return new_company
+        return await self._add(new_company)

@@ -9,3 +9,4 @@ class CreateCVRequest(BaseModel):
 class CreateCVResponse(CreateCVRequest):
     id: int
 
+

@@ -1,15 +1,13 @@
 from typing import Optional
-from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.models import CandidateAccountModel
-from src.app.schemas.candidate_account_schemas import CreateCandidateAccountRequest
 from sqlalchemy import select
+from src.core.base_classes.repository import BaseRepository
 
 
-class CandidateAccountRepository:
-    @staticmethod
+class CandidateAccountRepository(BaseRepository):
     async def get_candidate_account_id(
-            user_id: int,
-            db: AsyncSession
+            self,
+            user_id: int
     ) -> Optional[CandidateAccountModel.id]:
         query = (
             select(
@@ -20,21 +18,27 @@ class CandidateAccountRepository:
             )
         )
 
-        result = await db.execute(query)
+        result = await self._session.execute(query)
 
         return result.mappings().one_or_none()
 
-    @staticmethod
     async def create_candidate_account(
-            user_id: int,
-            db: AsyncSession
+            self,
+            user_id: int
     ) -> CandidateAccountModel:
         candidate_account = CandidateAccountModel(
             user_id=user_id
         )
-        db.add(candidate_account)
 
-        await db.commit()
-        await db.refresh(candidate_account)
+        return await self._add(candidate_account)
 
-        return candidate_account
+    async def get_candidate_account(
+            self,
+            user_id: int
+    ) -> Optional[CandidateAccountModel]:
+        query = (
+            select(CandidateAccountModel)
+            .where(CandidateAccountModel.user_id == user_id)
+        )
+
+        return await self._find_one(query)
