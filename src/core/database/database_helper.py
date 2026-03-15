@@ -17,10 +17,7 @@ DATABASE_URL = URL.create(
     password=config.password.get_secret_value(),
     host=config.host,
     port=config.port,
-    database=config.name,
-    # query={
-    #     "ssl": "require"
-    # }
+    database=config.name
 )
 
 

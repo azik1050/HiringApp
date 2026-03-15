@@ -1,7 +1,7 @@
 from authx import TokenPayload
 from fastapi import APIRouter, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from src.app.schemas.user_schemas import (
+from src.app.dependencies.services import build_user_service
+from src.app.schemas.create_user_schemas import (
     CreateUserRequest,
     CreateUserResponse,
     GetUsersResponse,
@@ -9,34 +9,33 @@ from src.app.schemas.user_schemas import (
 )
 from src.app.services.user_service import UserService
 from src.core.auth.security import security
-from src.core.database.database_helper import DataBase
 
 router = APIRouter(prefix="/users", tags=["User Controller"])
-service = UserService()
 
 
 @router.get(
     '/info/',
     status_code=200,
-    response_model=GetUserResponse
+    response_model=GetUserResponse,
+    dependencies=[Depends(security.access_token_required)]
 )
 async def get_user(
         token: TokenPayload = Depends(security.access_token_required),
-        db: AsyncSession = Depends(DataBase.get_db)
+        user_service: UserService = Depends(build_user_service)
 ):
-    user_id = int(token.sub)
-    return await service.get_user(user_id=user_id, db=db)
+    return await user_service.get_user(user_id=int(token.sub))
 
 
 @router.get(
     '/',
     status_code=200,
-    response_model=GetUsersResponse
+    response_model=GetUsersResponse,
+    dependencies=[Depends(security.access_token_required)]
 )
 async def get_users(
-        db: AsyncSession = Depends(DataBase.get_db)
+        user_service: UserService = Depends(build_user_service)
 ):
-    return await service.get_users(db=db)
+    return await user_service.get_users()
 
 
 @router.post(
@@ -47,18 +46,19 @@ async def get_users(
 )
 async def create_user(
         user: CreateUserRequest,
-        db: AsyncSession = Depends(DataBase.get_db)
+        user_service: UserService = Depends(build_user_service)
 ):
-    return await service.create_user(user=user, db=db)
+    return await user_service.create_user(user=user)
 
 
 @router.delete(
     '/{user_id}/',
     status_code=204,
-    response_model={}
+    response_model={},
+    deprecated=True
 )
 async def delete_user(
         user_id: int,
-        db: AsyncSession = Depends(DataBase.get_db)
+        user_service: UserService = Depends(build_user_service)
 ):
-    return await service.delete_user(id=user_id, db=db)
+    return await user_service.delete_user(id=user_id)
