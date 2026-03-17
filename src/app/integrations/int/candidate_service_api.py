@@ -17,7 +17,7 @@ class CandidateServiceAPI:
     ):
         """ Send request to POST /candidate-account """
         return await self._api_client.post(
-            endpoint="/candidate_account",
+            endpoint="/candidate-account",
             body=body,
             headers=headers,
             params=params,
