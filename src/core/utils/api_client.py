@@ -47,7 +47,8 @@ class APIClient:
         )
 
         if need_logging:
-            await APILogger.save_allure(response)
+            pass
+            # await APILogger.save_allure(response)
 
         if expected_status:
             assert expected_status.value == response.status_code, (
