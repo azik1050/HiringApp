@@ -1,27 +1,44 @@
-from http import HTTPMethod
-from typing import Optional
-from httpx import Client
+from http import HTTPMethod, HTTPStatus
+from typing import Optional, Any
+from httpx import AsyncClient, AsyncBaseTransport
+
+from src.core.utils.test_utils.api_logger import APILogger
 
 
 class APIClient:
     """Wrapper-class for sending external API requests"""
-    def __init__(self, base_url: str):
-        self._client = Client(
+
+    def __init__(
+            self,
+            base_url: str,
+            timeout: float = 100.0,
+            transport: Optional[AsyncBaseTransport] = None
+    ):
+        self._client = AsyncClient(
             base_url=base_url,
-            timeout=100.0
+            timeout=timeout,
+            transport=transport
         )
 
-    def _request(
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        if not self._client.is_closed:
+            await self._client.aclose()
+
+    async def _request(
             self,
             method: HTTPMethod,
             endpoint: str,
             headers: Optional[dict] = None,
             params: Optional[dict] = None,
             body: Optional[dict] = None,
-            need_logging: bool = False
+            need_logging: bool = False,
+            expected_status: Optional[HTTPStatus] = None
     ):
         """Method sending and logging HTTP request"""
-        response = self._client.request(
+        response = await self._client.request(
             method=method,
             url=endpoint,
             headers=headers,
@@ -30,43 +47,55 @@ class APIClient:
         )
 
         if need_logging:
-            """ Логгирование """
-            ...
+            await APILogger.save_allure(response)
+
+        if expected_status:
+            assert expected_status.value == response.status_code, (
+                f"Invalid response received for {response.request.url}",
+                f"Code: {response.status_code}. Body: {response.json()}"
+            )
 
         return response
 
-    def get(
+    async def set_header(self, key: str, value: Any):
+        self._client.headers.update({key: value})
+
+    async def get(
             self,
             endpoint: str,
             *,
             headers: Optional[dict] = None,
             params: Optional[dict] = None,
-            need_logging: bool = False
+            need_logging: bool = False,
+            expected_status: Optional[HTTPStatus] = None
     ):
         """Method for sending GET request"""
-        return self._request(
+        return await self._request(
             method=HTTPMethod.GET,
             endpoint=endpoint,
             headers=headers,
             params=params,
-            need_logging=need_logging
+            need_logging=need_logging,
+            expected_status=expected_status
         )
 
-    def post(
+    async def post(
             self,
             endpoint: str,
-            body: Optional[dict],
+            body: Optional[dict] = None,
             *,
             headers: Optional[dict] = None,
             params: Optional[dict] = None,
-            need_logging: bool = False
+            need_logging: bool = False,
+            expected_status: Optional[HTTPStatus] = None
     ):
         """Method for sending POST request"""
-        return self._request(
+        return await self._request(
             method=HTTPMethod.POST,
             endpoint=endpoint,
             headers=headers,
             params=params,
             body=body,
-            need_logging=need_logging
+            need_logging=need_logging,
+            expected_status=expected_status
         )

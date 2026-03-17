@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends
 from src.app.dependencies.services import build_auth_service
 from src.app.schemas.auth_schemas import (
     LoginRequest,
-    LoginResponse, RegisterRequest
+    LoginResponse,
+    RegisterRequest,
+    RegisterResponse
 )
 from src.app.schemas.create_user_schemas import CreateUserRequest
 from src.app.services.auth_service import AuthService
@@ -26,10 +28,10 @@ async def login(
 @router.post(
     '/register',
     status_code=200,
-    response_model=RegisterRequest
+    response_model=RegisterResponse
 )
 async def register(
-        user: CreateUserRequest,
+        user: RegisterRequest,
         auth_service: AuthService = Depends(build_auth_service)
 ):
     return await auth_service.register(user=user)

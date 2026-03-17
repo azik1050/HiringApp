@@ -2,7 +2,7 @@ from typing import Optional
 from sqlalchemy import select, MappingResult
 from src.app.models.company_account_model import CompanyAccountModel
 from src.app.schemas.create_company_account_schemas import CreateCompanyAccountRequest
-from src.core.base_classes.repository import BaseRepository
+from src.core.entities.repository import BaseRepository
 
 
 class CompanyAccountRepository(BaseRepository):

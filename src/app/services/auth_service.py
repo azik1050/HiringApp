@@ -1,11 +1,11 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from src.app.schemas.create_user_schemas import CreateUserRequest
 from src.core.auth.security import security
 from src.app.repositories.user_repository import UserRepository
 from src.app.schemas.auth_schemas import (
     LoginResponse,
-    LoginRequest
+    LoginRequest,
+    RegisterRequest
 )
 
 
@@ -18,7 +18,7 @@ class AuthService:
 
     async def register(
             self,
-            user: CreateUserRequest
+            user: RegisterRequest
     ):
         try:
             user = await self.user_repo.create_user(

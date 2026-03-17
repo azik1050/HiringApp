@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.repositories.company_account_repository import CompanyAccountRepository
+from src.app.repositories.cv_repository import CVRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
 from src.app.schemas.create_company_account_schemas import (
     CreateCompanyAccountRequest,
@@ -11,6 +11,7 @@ from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyRequest,
     CreateVacancyResponse
 )
+from src.app.schemas.get_all_vancancies_schemas import GetAllVacanciesResponse, Vacancy
 
 
 class CompanyService:
@@ -59,5 +60,27 @@ class CompanyService:
         return CreateVacancyResponse(
             id=new_vacancy.id,
             title=new_vacancy.title,
-            description=new_vacancy.description
+            description=new_vacancy.description,
+            minimal_salary=new_vacancy.minimal_salary,
+            minimal_year_exp=new_vacancy.minimal_year_exp,
+            job_location=new_vacancy.job_location
         )
+
+    async def get_vacancies(self):
+        vacancies_info = await self.vacancy_repo.get_vacancies()
+
+        return GetAllVacanciesResponse(
+            data=[
+                Vacancy(
+                    id=vacancy['id'],
+                    job_title=vacancy['job_title'],
+                    company_name=vacancy['company_name'],
+                    min_salary=vacancy['min_salary'],
+                    min_years_req=vacancy['min_years_req'],
+                    job_location=vacancy['job_location']
+                    )
+                for vacancy in vacancies_info
+            ]
+        )
+
+

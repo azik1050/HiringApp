@@ -39,3 +39,13 @@ class DevDBConfig(BaseSettings):
         env_prefix="DB_",
         extra="ignore"
     )
+
+
+class AppConfig(BaseSettings):
+    base_url: str
+
+    model_config = SettingsConfigDict(
+        env_file=ENV_PATH,
+        env_prefix="APP_",
+        extra="ignore"
+    )
