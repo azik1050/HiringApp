@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
@@ -10,6 +12,7 @@ from src.app.schemas.create_cv_schemas import (
     CreateCVRequest,
     CreateCVResponse
 )
+from src.app.schemas.get_cvs_schemas import GetCVsResponse
 from src.app.schemas.get_full_candidate_account_info import (
     GetFullCandidateAccountInfo,
     CV
@@ -98,3 +101,16 @@ class CandidateAccountService:
             ]
         )
 
+    async def get_cvs(
+            self,
+            cv_title: str,
+            min_creation_date: datetime
+    ):
+        cvs_info = await self.cv_repo.get_cvs_by_title_and_create_date(
+            cv_title=cv_title,
+            min_creation_date=min_creation_date
+        )
+
+        return GetCVsResponse(
+            data=cvs_info
+        )

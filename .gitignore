@@ -3,3 +3,4 @@ own.py
 **/__pycache__/
 .env
 .idea/
+**/allure-results/

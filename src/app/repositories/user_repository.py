@@ -1,9 +1,9 @@
 from typing import List, Optional
 from src.app.models import CandidateAccountModel, CompanyAccountModel
 from src.app.models.user_model import UserModel
-from src.app.schemas.create_user_schemas import CreateUserRequest
 from sqlalchemy import delete, select, MappingResult
-from src.core.base_classes.repository import BaseRepository
+from src.app.schemas.auth_schemas import RegisterRequest
+from src.core.entities.repository import BaseRepository
 
 
 class UserRepository(BaseRepository):
@@ -42,7 +42,7 @@ class UserRepository(BaseRepository):
 
     async def create_user(
             self,
-            user: CreateUserRequest
+            user: RegisterRequest
     ) -> UserModel:
         user = UserModel(
             name=user.name,

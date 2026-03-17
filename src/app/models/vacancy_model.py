@@ -32,6 +32,9 @@ class VacancyModel(Base):
         "CompanyAccountModel",
         back_populates="vacancies"
     )
+    minimal_salary: Mapped[int] = mapped_column(Integer, nullable=True)
+    minimal_year_exp: Mapped[int] = mapped_column(Integer, nullable=True)
+    job_location: Mapped[str] = mapped_column(String(100), nullable=True)
     creation_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
@@ -40,4 +43,3 @@ class VacancyModel(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
-

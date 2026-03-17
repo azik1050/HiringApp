@@ -8,8 +8,13 @@ from src.app.schemas.create_cv_schemas import (
     CreateCVRequest,
     CreateCVResponse
 )
+from src.app.schemas.get_cvs_schemas import GetCVsResponse
+from src.app.schemas.get_full_candidate_account_info import (
+    GetFullCandidateAccountInfo
+)
 from src.app.services.candidate_service import CandidateAccountService
 from src.core.auth.security import security
+from datetime import datetime
 
 router = APIRouter(prefix="/candidate-account", tags=["Candidate Account Controller"])
 
@@ -46,11 +51,32 @@ async def create_cv(
     )
 
 
-@router.get('/info/')
+@router.get(
+    '/info/',
+    status_code=200,
+    response_model=GetFullCandidateAccountInfo
+)
 async def get_candidate_account_info(
         token: TokenPayload = Depends(security.access_token_required),
         candidate_service: CandidateAccountService = Depends(build_candidate_service)
 ):
     return await candidate_service.get_candidate_account_info(
         user_id=int(token.sub)
+    )
+
+
+@router.get(
+    '/cv/all',
+    status_code=200,
+    response_model=GetCVsResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def get_all_cvs(
+        cv_title: str,
+        min_creation_date: datetime = datetime.now(),
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
+):
+    return await candidate_service.get_cvs(
+        cv_title=cv_title,
+        min_creation_date=min_creation_date
     )

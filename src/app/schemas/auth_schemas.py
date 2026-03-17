@@ -1,14 +1,22 @@
-from pydantic import BaseModel, SecretStr
-from pydantic.v1 import Field
+from pydantic import BaseModel, SecretStr, Field
+from src.core.utils.data_generator import DataGenerator
 
 
 class RegisterRequest(BaseModel):
-    name: str = Field(min_length=5, max_length=30)
-    password: str = Field(min_length=8, max_length=30)
+    name: str = Field(
+        min_length=5,
+        max_length=30,
+        default_factory=DataGenerator.name
+    )
+    password: str = Field(
+        min_length=8,
+        max_length=30,
+        default_factory=DataGenerator.password
+    )
 
 
-class ResponseResponse(BaseModel):
-    id: int
+class RegisterResponse(RegisterRequest):
+    pass
 
 
 class LoginRequest(BaseModel):
