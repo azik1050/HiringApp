@@ -24,3 +24,20 @@ class CandidateServiceAPI:
             expected_status=expected_status,
             need_logging=True
         )
+
+    async def create_cv(
+            self,
+            body: Optional[dict] = None,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.CREATED
+    ):
+        """ Send request to POST /candidate-account/cv """
+        return await self._api_client.post(
+            endpoint="/candidate-account/cv",
+            body=body,
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )

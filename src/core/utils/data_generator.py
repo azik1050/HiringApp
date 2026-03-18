@@ -11,3 +11,11 @@ class DataGenerator:
     @classmethod
     def password(cls):
         return cls.faker.password()
+
+    @classmethod
+    def job_title(cls):
+        return cls.faker.job()
+
+    @classmethod
+    def rand_text(cls):
+        return cls.faker.text(50)

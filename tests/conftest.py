@@ -7,7 +7,12 @@ from src.core.auth.security import security
 from src.core.utils.api_client import APIClient
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope='session')
+def anyio_backend():
+    return 'asyncio'
+
+
+@pytest.fixture(scope="session")
 async def int_api_client():
     async with APIClient(
             base_url="http://127.0.0.1:8000",
@@ -16,17 +21,17 @@ async def int_api_client():
         yield client
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def auth_service(int_api_client):
     return AuthServiceAPI(int_api_client)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 async def candidate_service(int_api_client):
     return CandidateServiceAPI(int_api_client)
 
 
 @pytest.fixture(scope="function", autouse=True)
-async def auth_token_guard(int_api_client):
+async def token_refresher(int_api_client):
     access_token = security.create_access_token(uid="1")
     await int_api_client.set_header("Authorization", access_token)

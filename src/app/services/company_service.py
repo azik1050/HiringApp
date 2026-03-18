@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from src.app.repositories.company_account_repository import CompanyAccountRepository
-from src.app.repositories.cv_repository import CVRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
 from src.app.schemas.create_company_account_schemas import (
     CreateCompanyAccountRequest,
@@ -11,7 +10,11 @@ from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyRequest,
     CreateVacancyResponse
 )
-from src.app.schemas.get_all_vancancies_schemas import GetAllVacanciesResponse, Vacancy
+from src.app.schemas.get_all_vancancies_schemas import (
+    GetAllVacanciesResponse,
+    Vacancy
+)
+from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
 
 
 class CompanyService:
@@ -66,8 +69,19 @@ class CompanyService:
             job_location=new_vacancy.job_location
         )
 
-    async def get_vacancies(self):
-        vacancies_info = await self.vacancy_repo.get_vacancies()
+    async def get_vacancies(
+            self,
+            job_title: str ,
+            company_name: str ,
+            min_salary: int,
+            min_years_req: int
+    ):
+        vacancies_info = await self.vacancy_repo.get_vacancies(
+            job_title=job_title,
+            company_name=company_name,
+            min_salary=min_salary,
+            min_years_req=min_years_req,
+        )
 
         return GetAllVacanciesResponse(
             data=[
@@ -81,6 +95,28 @@ class CompanyService:
                     )
                 for vacancy in vacancies_info
             ]
+        )
+
+    async def get_vacancy_by_id(self, vacancy_id: int):
+        vacancy = await self.vacancy_repo.get_vacancy_by_id(
+            vacancy_id=vacancy_id
+        )
+
+        if not vacancy:
+            raise HTTPException(
+                status_code=404,
+                detail="Vacancy not found"
+            )
+
+        return GetVacancyByIdResponse(
+            title=vacancy.title,
+            description=vacancy.description,
+            company_id=vacancy.company_id,
+            minimal_salary=vacancy.minimal_salary,
+            minimal_year_exp=vacancy.minimal_year_exp,
+            job_location=vacancy.job_location,
+            creation_date=str(vacancy.creation_date),
+            last_update_date=str(vacancy.last_update_date)
         )
 
 
