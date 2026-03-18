@@ -9,7 +9,7 @@ from src.app.schemas.create_cv_schemas import (
     CreateCVResponse
 )
 from src.app.schemas.get_cvs_schemas import GetCVsResponse
-from src.app.schemas.get_full_candidate_account_info import (
+from src.app.schemas.get_full_candidate_account_info_schemas import (
     GetFullCandidateAccountInfo
 )
 from src.app.services.candidate_service import CandidateAccountService

@@ -47,13 +47,12 @@ class APIClient:
         )
 
         if need_logging:
-            pass
-            # await APILogger.save_allure(response)
+            await APILogger.save_allure(response)
 
         if expected_status:
             assert expected_status.value == response.status_code, (
                 f"Invalid response received for {response.request.url}",
-                f"Code: {response.status_code}. Body: {response.json()}"
+                f"Code: {response.status_code}. Body: {response.content}"
             )
 
         return response

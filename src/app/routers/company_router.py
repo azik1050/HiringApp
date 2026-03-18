@@ -11,6 +11,7 @@ from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyRequest
 )
 from src.app.schemas.get_all_vancancies_schemas import GetAllVacanciesResponse
+from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
 from src.app.services.company_service import CompanyService
 from src.core.auth.security import security
 
@@ -58,7 +59,30 @@ async def create_vacancy(
     dependencies=[Depends(security.access_token_required)]
 )
 async def get_all_vacancies(
+        job_title: str = "",
+        company_name: str = "",
+        min_salary: int = 0,
+        min_years_req: int = 0,
         company_service: CompanyService = Depends(build_company_service)
 ):
-    return await company_service.get_vacancies()
+    return await company_service.get_vacancies(
+        job_title=job_title,
+        company_name=company_name,
+        min_salary=min_salary,
+        min_years_req=min_years_req,
+    )
 
+
+@router.get(
+    '/vacancy/{vacancy_id}/',
+    status_code=200,
+    response_model=GetVacancyByIdResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def get_vacancy_by_id(
+        vacancy_id: int,
+        company_service: CompanyService = Depends(build_company_service)
+):
+    return await company_service.get_vacancy_by_id(
+        vacancy_id=vacancy_id
+    )

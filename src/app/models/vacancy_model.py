@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.core.database.database_helper import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import (
@@ -32,9 +34,9 @@ class VacancyModel(Base):
         "CompanyAccountModel",
         back_populates="vacancies"
     )
-    minimal_salary: Mapped[int] = mapped_column(Integer, nullable=True)
-    minimal_year_exp: Mapped[int] = mapped_column(Integer, nullable=True)
-    job_location: Mapped[str] = mapped_column(String(100), nullable=True)
+    minimal_salary: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    minimal_year_exp: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    job_location: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     creation_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
