@@ -71,13 +71,13 @@ async def get_candidate_account_info(
 
 
 @router.get(
-    '/cv/all/',
+    '/cv/',
     status_code=200,
     response_model=GetCVsResponse,
     dependencies=[Depends(security.access_token_required)]
 )
 async def get_all_cvs(
-        cv_title: str,
+        cv_title: str = "",
         min_creation_date: datetime = datetime.now(),
         candidate_service: CandidateAccountService = Depends(build_candidate_service)
 ):

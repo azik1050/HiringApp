@@ -14,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["Auth Controller"])
 
 
 @router.post(
-    '/login',
+    '/login/',
     status_code=200,
     response_model=LoginResponse
 )
@@ -26,7 +26,7 @@ async def login(
 
 
 @router.post(
-    '/register',
+    '/register/',
     status_code=200,
     response_model=RegisterResponse
 )

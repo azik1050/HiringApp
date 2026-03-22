@@ -24,3 +24,20 @@ class AuthServiceAPI:
             expected_status=expected_status,
             need_logging=True
         )
+
+    async def login(
+            self,
+            body: Optional[dict] = None,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.OK
+    ):
+        """ Send request to POST /auth/login """
+        return await self._api_client.post(
+            endpoint="/auth/login",
+            body=body,
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )
