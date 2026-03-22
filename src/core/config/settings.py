@@ -1,4 +1,4 @@
-from pydantic import SecretStr, Field
+from pydantic import SecretStr, Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 from authx import AuthXConfig
@@ -33,6 +33,11 @@ class DevDBConfig(BaseSettings):
     password: SecretStr
     host: str
     port: int
+
+    @field_validator("port", mode="before")
+    @classmethod
+    def validate_port(cls, value: str) -> int:
+        return int(value)
 
     model_config = SettingsConfigDict(
         env_file=ENV_PATH,
