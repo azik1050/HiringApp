@@ -2,7 +2,7 @@ from sqlalchemy import select
 from src.app.models import CVModel, UserModel, CandidateAccountModel
 from src.app.schemas.create_cv_schemas import CreateCVRequest
 from src.app.schemas.get_cvs_schemas import CVdata
-from src.core.entities.repository import BaseRepository
+from src.app.repositories._base_repository import BaseRepository
 from datetime import datetime
 
 

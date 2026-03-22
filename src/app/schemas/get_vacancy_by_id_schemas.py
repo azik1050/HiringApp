@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 
 class GetVacancyByIdResponse(BaseModel):
+    id: int
     title: str
     description: str
     company_id: int

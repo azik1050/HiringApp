@@ -3,7 +3,7 @@ from sqlalchemy import select
 from src.app.models import CompanyAccountModel
 from src.app.models.vacancy_model import VacancyModel
 from src.app.schemas.create_vacancy_schemas import CreateVacancyRequest
-from src.core.entities.repository import BaseRepository
+from src.app.repositories._base_repository import BaseRepository
 
 
 class VacancyRepository(BaseRepository):
