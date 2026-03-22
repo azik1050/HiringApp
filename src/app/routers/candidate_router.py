@@ -8,6 +8,11 @@ from src.app.schemas.create_cv_schemas import (
     CreateCVRequest,
     CreateCVResponse
 )
+from src.app.schemas.create_job_application_schemas import (
+    CreateJobApplicationResponse,
+    CreateJobApplicationRequest
+)
+from src.app.schemas.get_all_vancancies_schemas import GetAllVacanciesResponse
 from src.app.schemas.get_cvs_schemas import GetCVsResponse
 from src.app.schemas.get_full_candidate_account_info_schemas import (
     GetFullCandidateAccountInfo
@@ -66,7 +71,7 @@ async def get_candidate_account_info(
 
 
 @router.get(
-    '/cv/all',
+    '/cv/all/',
     status_code=200,
     response_model=GetCVsResponse,
     dependencies=[Depends(security.access_token_required)]
@@ -79,4 +84,40 @@ async def get_all_cvs(
     return await candidate_service.get_cvs(
         cv_title=cv_title,
         min_creation_date=min_creation_date
+    )
+
+
+@router.post(
+    '/cv/application/',
+    status_code=201,
+    response_model=CreateJobApplicationResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def create_job_application(
+        job_application: CreateJobApplicationRequest,
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
+):
+    return await candidate_service.create_application(
+        job_application=job_application
+    )
+
+
+@router.get(
+    '/vacancy/',
+    status_code=200,
+    response_model=GetAllVacanciesResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def get_all_vacancies(
+        job_title: str = "",
+        company_name: str = "",
+        min_salary: int = 0,
+        min_years_req: int = 0,
+        candidate_service: CandidateAccountService = Depends(build_candidate_service)
+):
+    return await candidate_service.get_vacancies(
+        job_title=job_title,
+        company_name=company_name,
+        min_salary=min_salary,
+        min_years_req=min_years_req,
     )

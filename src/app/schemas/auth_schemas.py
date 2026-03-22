@@ -16,7 +16,7 @@ class RegisterRequest(BaseModel):
 
 
 class RegisterResponse(RegisterRequest):
-    pass
+    id: int
 
 
 class LoginRequest(BaseModel):

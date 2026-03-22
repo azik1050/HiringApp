@@ -2,9 +2,14 @@ from sqlalchemy import (
     Integer,
     Text,
     DateTime,
-    Boolean, ForeignKey
+    Boolean,
+    ForeignKey
 )
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import (
+    Mapped,
+    mapped_column,
+    relationship
+)
 from sqlalchemy.sql import func
 from src.core.database.database_helper import Base
 from datetime import datetime
@@ -18,16 +23,20 @@ class JobApplicationModel(Base):
         primary_key=True,
         autoincrement=True
     )
-    cover_letter: Mapped[str] = mapped_column(Text)
+    cover_letter: Mapped[str] = mapped_column(
+        Text,
+        nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
     )
-    rejected: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False
-    )
     accepted: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=True,
+        default=None
+    )
+    cancelled: Mapped[bool] = mapped_column(
         Boolean,
         default=False
     )

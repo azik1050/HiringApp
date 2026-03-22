@@ -3,7 +3,7 @@ from src.app.models import CandidateAccountModel, CompanyAccountModel
 from src.app.models.user_model import UserModel
 from sqlalchemy import delete, select, MappingResult
 from src.app.schemas.auth_schemas import RegisterRequest
-from src.core.entities.repository import BaseRepository
+from src.app.repositories._base_repository import BaseRepository
 
 
 class UserRepository(BaseRepository):
@@ -66,7 +66,7 @@ class UserRepository(BaseRepository):
     async def get_full_user_info(
             self,
             id: int
-    ) -> Optional[MappingResult]:
+    ) -> Optional[dict]:
         query = (
             select(
                 UserModel.id,

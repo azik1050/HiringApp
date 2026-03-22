@@ -1,7 +1,7 @@
 from typing import Optional
 from src.app.models import CandidateAccountModel
 from sqlalchemy import select
-from src.core.entities.repository import BaseRepository
+from src.app.repositories._base_repository import BaseRepository
 
 
 class CandidateAccountRepository(BaseRepository):

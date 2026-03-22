@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
+from src.app.services.mappers.auth_service_mapper import AuthServiceMapper
 from src.core.auth.security import security
 from src.app.repositories.user_repository import UserRepository
 from src.app.schemas.auth_schemas import (
@@ -14,6 +15,7 @@ class AuthService:
             self,
             user_repo: UserRepository
     ):
+        self.mapper = AuthServiceMapper()
         self.user_repo = user_repo
 
     async def register(
@@ -21,13 +23,13 @@ class AuthService:
             user: RegisterRequest
     ):
         try:
-            user = await self.user_repo.create_user(
+            created_user = await self.user_repo.create_user(
                 user=user
             )
         except IntegrityError:
             raise HTTPException(status_code=400, detail="User already exists")
 
-        return user
+        return self.mapper.user(created_user)
 
     async def login(
             self,
@@ -47,6 +49,4 @@ class AuthService:
                 uid=str(existing_user.id)
             )
 
-            return LoginResponse(
-                access_token=token
-            )
+            return self.mapper.auth_details(token)
