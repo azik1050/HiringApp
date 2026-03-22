@@ -41,3 +41,49 @@ class CandidateServiceAPI:
             expected_status=expected_status,
             need_logging=True
         )
+
+    async def get_candidate_info(
+            self,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.OK
+    ):
+        """ Send request to POST /candidate-account/info """
+        return await self._api_client.get(
+            endpoint="/candidate-account/info",
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )
+
+    async def get_all_cvs(
+            self,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.OK
+    ):
+        """ Send request to POST /candidate-account/cv """
+        return await self._api_client.get(
+            endpoint="/candidate-account/cv",
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )
+
+    async def get_vacancies(
+            self,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.OK
+    ):
+        """ Send request to POST /candidate-account/vacancy """
+        return await self._api_client.get(
+            endpoint="/candidate-account/vacancy",
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )
+
