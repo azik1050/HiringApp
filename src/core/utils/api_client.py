@@ -12,11 +12,13 @@ class APIClient:
             self,
             base_url: str,
             timeout: float = 100.0,
+            follow_redirects: bool = True,
             transport: Optional[AsyncBaseTransport] = None
     ):
         self._client = AsyncClient(
             base_url=base_url,
             timeout=timeout,
+            follow_redirects=follow_redirects,
             transport=transport
         )
 

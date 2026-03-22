@@ -5,7 +5,7 @@ from src.core.utils.data_generator import DataGenerator
 
 class CreateCVRequest(BaseModel):
     title: str = Field(
-        min_length=10,
+        min_length=1,
         max_length=205,
         default_factory=DataGenerator.job_title
     )
