@@ -48,7 +48,7 @@ class CandidateServiceAPI:
             params: Optional[dict] = None,
             expected_status: HTTPStatus = HTTPStatus.OK
     ):
-        """ Send request to POST /candidate-account/info """
+        """ Send request to GET /candidate-account/info """
         return await self._api_client.get(
             endpoint="/candidate-account/info",
             headers=headers,
@@ -63,7 +63,7 @@ class CandidateServiceAPI:
             params: Optional[dict] = None,
             expected_status: HTTPStatus = HTTPStatus.OK
     ):
-        """ Send request to POST /candidate-account/cv """
+        """ Send request to GET /candidate-account/cv """
         return await self._api_client.get(
             endpoint="/candidate-account/cv",
             headers=headers,
@@ -78,7 +78,7 @@ class CandidateServiceAPI:
             params: Optional[dict] = None,
             expected_status: HTTPStatus = HTTPStatus.OK
     ):
-        """ Send request to POST /candidate-account/vacancy """
+        """ Send request to GET /candidate-account/vacancy """
         return await self._api_client.get(
             endpoint="/candidate-account/vacancy",
             headers=headers,
@@ -87,3 +87,18 @@ class CandidateServiceAPI:
             need_logging=True
         )
 
+    async def get_vacancy_by_id(
+            self,
+            vacancy_id: int,
+            headers: Optional[dict] = None,
+            params: Optional[dict] = None,
+            expected_status: HTTPStatus = HTTPStatus.OK
+    ):
+        """ Send request to GET /candidate-account/vacancy/{vacancy_id} """
+        return await self._api_client.get(
+            endpoint=f"/candidate-account/vacancy/{vacancy_id}",
+            headers=headers,
+            params=params,
+            expected_status=expected_status,
+            need_logging=True
+        )

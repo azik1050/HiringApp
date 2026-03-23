@@ -26,7 +26,10 @@ from src.app.schemas.get_full_candidate_account_info_schemas import (
 from src.app.schemas.get_all_vancancies_schemas import (
     GetAllVacanciesResponse
 )
-from src.app.services.mappers.candidate_service_mapper import CandidateAccountServiceMapper
+from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
+from src.app.services.mappers.candidate_service_mapper import (
+    CandidateAccountServiceMapper
+)
 
 
 class CandidateAccountService:
@@ -131,3 +134,16 @@ class CandidateAccountService:
         )
 
         return self.mapper.all_vacancies(vacancies)
+
+    async def get_vacancy_by_id(
+            self,
+            vacancy_id: int
+    ) -> GetVacancyByIdResponse:
+        vacancy = await self.vacancy_repo.get_vacancy_by_id(
+            vacancy_id=vacancy_id
+        )
+
+        if not vacancy:
+            raise HTTPException(status_code=404, detail="Vacancy not found")
+
+        return self.mapper.vacancy(vacancy)

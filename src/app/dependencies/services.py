@@ -56,10 +56,12 @@ def build_user_service(
 
 def build_company_service(
         company_repo: CompanyAccountRepository = Depends(build_company_repo),
-        vacancy_repo: VacancyRepository = Depends(build_vacancy_repo)
+        vacancy_repo: VacancyRepository = Depends(build_vacancy_repo),
+        application_repo: JobApplicationRepository = Depends(build_job_application_repo)
 ):
     """Returns created CompanyService"""
     return CompanyService(
         company_repo=company_repo,
-        vacancy_repo=vacancy_repo
+        vacancy_repo=vacancy_repo,
+        application_repo=application_repo
     )

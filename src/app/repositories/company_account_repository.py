@@ -34,3 +34,16 @@ class CompanyAccountRepository(BaseRepository):
         )
 
         return await self._add(new_company)
+
+    async def get_company_by_owner_id(
+            self,
+            owner_id: int
+    ) -> Optional[CompanyAccountModel]:
+        query = (
+            select(CompanyAccountModel)
+            .where(CompanyAccountModel.owner_id == owner_id)
+        )
+
+        result = await self._session.execute(query)
+
+        return result.scalars().one_or_none()
