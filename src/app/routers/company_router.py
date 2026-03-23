@@ -10,7 +10,8 @@ from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyResponse,
     CreateVacancyRequest
 )
-from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
+from src.app.schemas.get_company_info import GetCompanyInfoResponse
+from src.app.schemas.get_company_vacancy_by_id import GetCompanyVacancyByIdResponse
 from src.app.services.company_service import CompanyService
 from src.core.auth.security import security
 
@@ -52,15 +53,32 @@ async def create_vacancy(
 
 
 @router.get(
-    '/vacancy/{vacancy_id}/',
+    '/',
     status_code=200,
-    response_model=GetVacancyByIdResponse,
+    response_model=GetCompanyInfoResponse,
     dependencies=[Depends(security.access_token_required)]
 )
-async def get_vacancy_by_id(
-        vacancy_id: int,
+async def get_company_info(
+        token: TokenPayload = Depends(security.access_token_required),
         company_service: CompanyService = Depends(build_company_service)
 ):
-    return await company_service.get_vacancy_by_id(
-        vacancy_id=vacancy_id
+    return await company_service.get_company_info(
+        owner_id=int(token.sub)
+    )
+
+
+@router.get(
+    '/vacancy/{vacancy_id}',
+    status_code=200,
+    response_model=GetCompanyVacancyByIdResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def get_company_vacancy_by_id(
+        vacancy_id: int,
+        token: TokenPayload = Depends(security.access_token_required),
+        company_service: CompanyService = Depends(build_company_service)
+):
+    return await company_service.get_company_vacancy_by_id(
+        vacancy_id=vacancy_id,
+        user_id=int(token.sub)
     )

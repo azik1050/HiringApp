@@ -1,6 +1,6 @@
 from typing import Optional
 from sqlalchemy import select
-from src.app.models import CompanyAccountModel
+from src.app.models import CompanyAccountModel, UserModel
 from src.app.models.vacancy_model import VacancyModel
 from src.app.schemas.create_vacancy_schemas import CreateVacancyRequest
 from src.app.repositories._base_repository import BaseRepository
@@ -63,3 +63,28 @@ class VacancyRepository(BaseRepository):
         )
 
         return await self._find_one(query)
+
+    async def get_vacancies_by_owner_id(
+            self,
+            owner_id: int
+    ) -> list[VacancyModel]:
+        query = (
+            select(
+                VacancyModel
+            )
+            .join(
+                CompanyAccountModel, VacancyModel.company_id == CompanyAccountModel.id
+            )
+            .join(
+                UserModel, CompanyAccountModel.owner_id == UserModel.id
+            )
+            .where(
+                UserModel.id == owner_id
+            )
+            .order_by(VacancyModel.last_update_date.desc())
+        )
+
+        result = await self._session.execute(query)
+
+        return result.scalars().all()
+

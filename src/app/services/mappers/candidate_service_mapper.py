@@ -19,6 +19,7 @@ from src.app.schemas.get_full_candidate_account_info_schemas import (
     GetFullCandidateAccountInfo,
     CV
 )
+from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
 
 
 class CandidateAccountServiceMapper:
@@ -88,3 +89,18 @@ class CandidateAccountServiceMapper:
             id=candidate.id,
             user_id=candidate.user_id
         )
+
+    @staticmethod
+    def vacancy(vacancy):
+        return GetVacancyByIdResponse(
+            id=vacancy.id,
+            title=vacancy.title,
+            description=vacancy.description,
+            company_id=vacancy.company_id,
+            minimal_salary=vacancy.minimal_salary,
+            minimal_year_exp=vacancy.minimal_year_exp,
+            job_location=vacancy.job_location,
+            creation_date=str(vacancy.creation_date),
+            last_update_date=str(vacancy.last_update_date)
+        )
+

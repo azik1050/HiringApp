@@ -1,5 +1,10 @@
 from sqlalchemy import select
-from src.app.models import JobApplicationModel
+from src.app.models import (
+    JobApplicationModel,
+    UserModel,
+    VacancyModel,
+    CompanyAccountModel
+)
 from src.app.schemas.create_job_application_schemas import CreateJobApplicationRequest
 from src.app.repositories._base_repository import BaseRepository
 
@@ -36,3 +41,31 @@ class JobApplicationRepository(BaseRepository):
         result = await self._session.execute(query)
 
         return self._find_all(query)
+
+    async def get_applications_info_by_vacancy_id(
+            self,
+            vacancy_id: int
+    ) -> dict:
+        query = (
+            select(
+                JobApplicationModel.id,
+                UserModel.name.label("candidate_name"),
+                JobApplicationModel.accepted,
+                JobApplicationModel.cover_letter,
+                JobApplicationModel.created_at,
+            )
+            .join(
+                VacancyModel, JobApplicationModel.vacancy_id == VacancyModel.id
+            )
+            .join(
+                CompanyAccountModel, VacancyModel.company_id == CompanyAccountModel.id
+            )
+            .join(
+                UserModel, CompanyAccountModel.owner_id == UserModel.id
+            )
+            .where(JobApplicationModel.vacancy_id == vacancy_id)
+        )
+
+        result = await self._session.execute(query)
+
+        return result.mappings().all()
