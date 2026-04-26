@@ -1,5 +1,4 @@
 from typing import Optional
-
 from src.core.database.database_helper import Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 from sqlalchemy import (
@@ -44,4 +43,8 @@ class VacancyModel(Base):
     last_update_date: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
+    )
+    invitations: Mapped["InvitationModel"] = relationship(
+        "InvitationModel",
+        back_populates="vacancy"
     )

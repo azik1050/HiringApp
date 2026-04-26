@@ -6,6 +6,7 @@ from src.app.schemas.create_company_account_schemas import (
     CreateCompanyAccountResponse,
     CreateCompanyAccountRequest
 )
+from src.app.schemas.create_invitation_schemas import CreateInvitationRequest
 from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyResponse,
     CreateVacancyRequest
@@ -68,7 +69,7 @@ async def get_company_info(
 
 
 @router.get(
-    '/vacancy/{vacancy_id}',
+    '/vacancy/{vacancy_id}/',
     status_code=200,
     response_model=GetCompanyVacancyByIdResponse,
     dependencies=[Depends(security.access_token_required)]
@@ -82,3 +83,21 @@ async def get_company_vacancy_by_id(
         vacancy_id=vacancy_id,
         user_id=int(token.sub)
     )
+
+
+@router.post(
+    '/vacancy/{vacancy_id}/invitation/',
+    status_code=201,
+    response_model=None,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def create_invitation(
+        vacancy_id: int,
+        create_invitation_request: CreateInvitationRequest,
+        company_service: CompanyService = Depends(build_company_service)
+):
+    return await company_service.create_invitation(
+        vacancy_id=vacancy_id,
+        create_invitation_request=create_invitation_request
+    )
+

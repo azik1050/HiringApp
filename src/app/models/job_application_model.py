@@ -54,3 +54,7 @@ class JobApplicationModel(Base):
         "VacancyModel",
         back_populates="applications"
     )
+    invitation: Mapped["InvitationModel"] = relationship(
+        "InvitationModel",
+        back_populates="job_application"
+    )

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.company_account_repository import CompanyAccountRepository
 from src.app.repositories.cv_repository import CVRepository
+from src.app.repositories.invitation_repository import InvitationRepository
 from src.app.repositories.job_application_repository import JobApplicationRepository
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
@@ -49,3 +50,10 @@ def build_job_application_repo(
 ):
     """Returns created CVRepository object"""
     return JobApplicationRepository(session=session)
+
+
+def build_invitation_repo(
+        session: AsyncSession = Depends(DataBase.get_db)
+):
+    """Returns created CVRepository object"""
+    return InvitationRepository(session=session)

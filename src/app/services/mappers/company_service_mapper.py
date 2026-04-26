@@ -1,8 +1,9 @@
 from src.app.models import (
     CompanyAccountModel,
-    VacancyModel
+    VacancyModel, InvitationModel
 )
 from src.app.schemas.create_company_account_schemas import CreateCompanyAccountResponse
+from src.app.schemas.create_invitation_schemas import CreateInvitationResponse
 from src.app.schemas.create_vacancy_schemas import CreateVacancyResponse
 from src.app.schemas.get_company_info import (
     GetCompanyInfoResponse,
@@ -61,7 +62,6 @@ class CompanyServiceMapper:
             vacancy: VacancyModel,
             applications_info: dict
     ):
-        print(applications_info)
         return GetCompanyVacancyByIdResponse(
             id=vacancy.id,
             title=vacancy.title,
@@ -81,4 +81,14 @@ class CompanyServiceMapper:
                 )
                 for app in applications_info
             ]
+        )
+
+    @staticmethod
+    def created_invitation(
+            invitation: InvitationModel
+    ):
+        return CreateInvitationResponse(
+            id=invitation.id,
+            message=invitation.message,
+            job_application_id=invitation.job_application_id
         )
