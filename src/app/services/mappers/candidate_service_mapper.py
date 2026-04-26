@@ -1,8 +1,9 @@
+from typing import Optional
 from src.app.models import (
     JobApplicationModel,
     CVModel,
     UserModel,
-    CandidateAccountModel
+    CandidateAccountModel, VacancyModel
 )
 from src.app.schemas.create_candidate_account_schemas import CreateCandidateAccountResponse
 from src.app.schemas.create_cv_schemas import CreateCVResponse
@@ -19,7 +20,7 @@ from src.app.schemas.get_full_candidate_account_info_schemas import (
     GetFullCandidateAccountInfo,
     CV
 )
-from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse
+from src.app.schemas.get_vacancy_by_id_schemas import GetVacancyByIdResponse, Application
 
 
 class CandidateAccountServiceMapper:
@@ -91,7 +92,7 @@ class CandidateAccountServiceMapper:
         )
 
     @staticmethod
-    def vacancy(vacancy):
+    def vacancy(vacancy: VacancyModel, application: Optional[JobApplicationModel]):
         return GetVacancyByIdResponse(
             id=vacancy.id,
             title=vacancy.title,
@@ -101,6 +102,11 @@ class CandidateAccountServiceMapper:
             minimal_year_exp=vacancy.minimal_year_exp,
             job_location=vacancy.job_location,
             creation_date=str(vacancy.creation_date),
-            last_update_date=str(vacancy.last_update_date)
+            last_update_date=str(vacancy.last_update_date),
+            application=Application(
+                accepted=application.accepted,
+                cover_letter=application.cover_letter,
+                created_at=str(application.created_at)
+            ) if application else None
         )
 

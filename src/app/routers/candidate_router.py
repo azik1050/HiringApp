@@ -132,8 +132,10 @@ async def get_all_vacancies(
 )
 async def get_vacancy_by_id(
         vacancy_id: int,
-        candidate_service: CandidateAccountService = Depends(build_candidate_service)
+        candidate_service: CandidateAccountService = Depends(build_candidate_service),
+        token: TokenPayload = Depends(security.access_token_required)
 ):
     return await candidate_service.get_vacancy_by_id(
-        vacancy_id=vacancy_id
+        vacancy_id=vacancy_id,
+        user_id=int(token.sub)
     )
