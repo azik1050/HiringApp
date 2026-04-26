@@ -2,6 +2,12 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class Application(BaseModel):
+    accepted: Optional[bool]
+    cover_letter: str
+    created_at: str
+
+
 class GetVacancyByIdResponse(BaseModel):
     id: int
     title: str
@@ -12,3 +18,4 @@ class GetVacancyByIdResponse(BaseModel):
     job_location: Optional[str]
     creation_date: str
     last_update_date: str
+    application: Optional[Application]

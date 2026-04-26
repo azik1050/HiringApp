@@ -5,7 +5,7 @@ from src.app.models import (
     JobApplicationModel,
     UserModel,
     VacancyModel,
-    CompanyAccountModel
+    CompanyAccountModel, CVModel, CandidateAccountModel
 )
 from src.app.schemas.create_job_application_schemas import CreateJobApplicationRequest
 from src.app.repositories._base_repository import BaseRepository
@@ -95,3 +95,17 @@ class JobApplicationRepository(BaseRepository):
         )
         await self._session.execute(query)
         await self._session.commit()
+
+    async def get_candidate_vacancy_application(
+            self,
+            user_id: int,
+            vacancy_id: int
+    ) -> Optional[JobApplicationModel]:
+        query = (
+            select(JobApplicationModel)
+            .join(CVModel, CVModel.id == JobApplicationModel.cv_id)
+            .join(CandidateAccountModel, CandidateAccountModel.id == CVModel.candidate_account_id)
+            .join(UserModel, UserModel.id == user_id)
+            .where(JobApplicationModel.vacancy_id == vacancy_id)
+        )
+        return await self._find_one(query)

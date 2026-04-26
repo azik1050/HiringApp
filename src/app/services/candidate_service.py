@@ -137,13 +137,18 @@ class CandidateAccountService:
 
     async def get_vacancy_by_id(
             self,
+            user_id: int,
             vacancy_id: int
     ) -> GetVacancyByIdResponse:
         vacancy = await self.vacancy_repo.get_vacancy_by_id(
+            vacancy_id=vacancy_id
+        )
+        application = await self.application_repo.get_candidate_vacancy_application(
+            user_id=user_id,
             vacancy_id=vacancy_id
         )
 
         if not vacancy:
             raise HTTPException(status_code=404, detail="Vacancy not found")
 
-        return self.mapper.vacancy(vacancy)
+        return self.mapper.vacancy(vacancy, application)
