@@ -65,3 +65,11 @@ class BaseRepository(ABC):
         )
         await self._session.execute(query)
         await self._session.commit()
+
+    async def update(self, instance):
+        """
+        Makes a commit in DB
+        :return:
+        """
+        await self._session.commit()
+        await self._session.refresh(instance)

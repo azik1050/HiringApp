@@ -5,11 +5,12 @@ from src.app.dependencies.repositories import (
     build_vacancy_repo,
     build_company_repo,
     build_cv_repo,
-    build_job_application_repo
+    build_job_application_repo, build_invitation_repo
 )
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.company_account_repository import CompanyAccountRepository
 from src.app.repositories.cv_repository import CVRepository
+from src.app.repositories.invitation_repository import InvitationRepository
 from src.app.repositories.job_application_repository import JobApplicationRepository
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
@@ -57,11 +58,13 @@ def build_user_service(
 def build_company_service(
         company_repo: CompanyAccountRepository = Depends(build_company_repo),
         vacancy_repo: VacancyRepository = Depends(build_vacancy_repo),
-        application_repo: JobApplicationRepository = Depends(build_job_application_repo)
+        application_repo: JobApplicationRepository = Depends(build_job_application_repo),
+        invitation_repo: InvitationRepository = Depends(build_invitation_repo),
 ):
     """Returns created CompanyService"""
     return CompanyService(
         company_repo=company_repo,
         vacancy_repo=vacancy_repo,
-        application_repo=application_repo
+        application_repo=application_repo,
+        invitation_repo=invitation_repo
     )

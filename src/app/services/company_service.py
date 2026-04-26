@@ -3,12 +3,14 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from src.app.models import VacancyModel
 from src.app.repositories.company_account_repository import CompanyAccountRepository
+from src.app.repositories.invitation_repository import InvitationRepository
 from src.app.repositories.job_application_repository import JobApplicationRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
 from src.app.schemas.create_company_account_schemas import (
     CreateCompanyAccountRequest,
     CreateCompanyAccountResponse
 )
+from src.app.schemas.create_invitation_schemas import CreateInvitationRequest, CreateInvitationResponse
 from src.app.schemas.create_vacancy_schemas import (
     CreateVacancyRequest,
     CreateVacancyResponse
@@ -23,11 +25,13 @@ class CompanyService:
             company_repo: CompanyAccountRepository,
             vacancy_repo: VacancyRepository,
             application_repo: JobApplicationRepository,
+            invitation_repo: InvitationRepository,
     ):
         self.mapper = CompanyServiceMapper()
         self.company_repo = company_repo
         self.vacancy_repo = vacancy_repo
         self.application_repo = application_repo
+        self.invitation_repo = invitation_repo
 
     async def create_company(
             self,
@@ -93,3 +97,14 @@ class CompanyService:
         )
 
         return self.mapper.company_vacancy(vacancy, applications_info)
+
+    async def create_invitation(
+            self,
+            vacancy_id: int,
+            create_invitation_request: CreateInvitationRequest
+    ) -> CreateInvitationResponse:
+        invitation = await self.invitation_repo.create_invitation(create_invitation_request, vacancy_id)
+        await self.application_repo.set_application_accepted(application_id=invitation.job_application_id)
+
+        return self.mapper.created_invitation(invitation)
+

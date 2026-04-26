@@ -1,4 +1,6 @@
-from sqlalchemy import select
+from typing import Optional
+
+from sqlalchemy import select, update
 from src.app.models import (
     JobApplicationModel,
     UserModel,
@@ -69,3 +71,27 @@ class JobApplicationRepository(BaseRepository):
         result = await self._session.execute(query)
 
         return result.mappings().all()
+
+    async def get_application_by_id(
+            self,
+            application_id: int
+    ) -> Optional[JobApplicationModel]:
+        query = (
+            select(JobApplicationModel)
+            .where(JobApplicationModel.id == application_id)
+        )
+        result = await self._session.execute(query)
+
+        return result.scalars().one_or_none()
+
+    async def set_application_accepted(
+            self,
+            application_id: int
+    ) -> None:
+        query = (
+            update(JobApplicationModel)
+            .where(JobApplicationModel.id == application_id)
+            .values(accepted=True)
+        )
+        await self._session.execute(query)
+        await self._session.commit()
