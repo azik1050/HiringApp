@@ -1,5 +1,4 @@
 from typing import Optional
-
 from pydantic import SecretStr
 from sqlalchemy import Integer, String, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -29,4 +28,8 @@ class UserModel(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
+    )
+    complaints: Mapped["ComplaintModel"] = relationship(
+        "ComplaintModel",
+        back_populates="user"
     )

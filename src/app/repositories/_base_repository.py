@@ -27,7 +27,6 @@ class BaseRepository(ABC):
         :return: DB models as a list
         """
         result = await self._session.execute(query)
-
         return result.scalar_one_or_none()
 
     async def _find_one_labeled(self, query: Select[Any]) -> Optional[MappingResult]:

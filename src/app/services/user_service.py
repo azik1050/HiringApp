@@ -51,3 +51,9 @@ class UserService:
     ) -> dict:
         await self.user_repo.delete_user(id)
         return {}
+
+    async def create_complain(
+            self,
+
+    ):
+        pass

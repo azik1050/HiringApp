@@ -107,5 +107,7 @@ class JobApplicationRepository(BaseRepository):
             .join(CandidateAccountModel, CandidateAccountModel.id == CVModel.candidate_account_id)
             .join(UserModel, UserModel.id == user_id)
             .where(JobApplicationModel.vacancy_id == vacancy_id)
+            .where(CVModel.candidate_account_id == CandidateAccountModel.id)
+            .where(UserModel.id == CandidateAccountModel.user_id)
         )
         return await self._find_one(query)
