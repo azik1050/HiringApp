@@ -1,10 +1,11 @@
-from src.app.models import UserModel
+from src.app.models import UserModel, ComplaintModel
 from src.app.schemas.create_user_schemas import (
     GetUserResponse,
     GetUsersResponse,
     User,
     CreateUserResponse
 )
+from src.app.schemas.create_complaint_schemas import CreateComplaintResponse
 
 
 class UserServiceMapper:
@@ -34,4 +35,17 @@ class UserServiceMapper:
         return CreateUserResponse(
             id=user.id,
             name=user.name
+        )
+
+    @staticmethod
+    def created_complaint(complaint: ComplaintModel) -> CreateComplaintResponse:
+        """
+        Maps a ComplaintModel to CreateComplaintResponse
+        :param complaint: Created complaint model
+        :return: CreateComplaintResponse
+        """
+        return CreateComplaintResponse(
+            id=complaint.id,
+            message=complaint.message,
+            user_id=complaint.user_id
         )

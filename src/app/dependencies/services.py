@@ -5,15 +5,19 @@ from src.app.dependencies.repositories import (
     build_vacancy_repo,
     build_company_repo,
     build_cv_repo,
-    build_job_application_repo, build_invitation_repo
+    build_job_application_repo,
+    build_invitation_repo,
+    build_complaint_repo
 )
 from src.app.repositories.candidate_account_repository import CandidateAccountRepository
 from src.app.repositories.company_account_repository import CompanyAccountRepository
+from src.app.repositories.complaint_repository import ComplaintRepository
 from src.app.repositories.cv_repository import CVRepository
 from src.app.repositories.invitation_repository import InvitationRepository
 from src.app.repositories.job_application_repository import JobApplicationRepository
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
+from src.app.services.admin_service import AdminService
 from src.app.services.auth_service import AuthService
 from src.app.services.candidate_service import CandidateAccountService
 from src.app.services.company_service import CompanyService
@@ -47,11 +51,13 @@ def build_candidate_service(
 
 
 def build_user_service(
-        user_repo: UserRepository = Depends(build_user_repo)
+        user_repo: UserRepository = Depends(build_user_repo),
+        complaint_repo: ComplaintRepository = Depends(build_complaint_repo)
 ):
     """Returns created UserService"""
     return UserService(
-        user_repo=user_repo
+        user_repo=user_repo,
+        complaint_repo=complaint_repo
     )
 
 
@@ -67,4 +73,13 @@ def build_company_service(
         vacancy_repo=vacancy_repo,
         application_repo=application_repo,
         invitation_repo=invitation_repo
+    )
+
+
+def build_admin_service(
+    complaint_repo: ComplaintRepository = Depends(build_complaint_repo),
+):
+    """Returns created CompanyService"""
+    return AdminService(
+        complaint_repository=complaint_repo,
     )

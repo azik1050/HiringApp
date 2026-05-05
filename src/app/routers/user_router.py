@@ -1,6 +1,7 @@
 from authx import TokenPayload
 from fastapi import APIRouter, Depends
 from src.app.dependencies.services import build_user_service
+from src.app.schemas.create_complaint_schemas import CreateComplaintRequest, CreateComplaintResponse
 from src.app.schemas.create_user_schemas import (
     CreateUserRequest,
     CreateUserResponse,
@@ -62,3 +63,21 @@ async def delete_user(
         user_service: UserService = Depends(build_user_service)
 ):
     return await user_service.delete_user(id=user_id)
+
+
+@router.post(
+    '/complaints/',
+    status_code=201,
+    response_model=CreateComplaintResponse,
+    dependencies=[Depends(security.access_token_required)]
+)
+async def create_complaint(
+        complaint: CreateComplaintRequest,
+        token: TokenPayload = Depends(security.access_token_required),
+        user_service: UserService = Depends(build_user_service)
+):
+    return await user_service.create_complaint(
+        user_id=int(token.sub),
+        complaint=complaint
+    )
+

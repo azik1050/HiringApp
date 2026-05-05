@@ -6,7 +6,6 @@ from src.app.schemas.auth_schemas import (
     RegisterRequest,
     RegisterResponse
 )
-from src.app.schemas.create_user_schemas import CreateUserRequest
 from src.app.services.auth_service import AuthService
 
 

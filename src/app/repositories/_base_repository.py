@@ -1,5 +1,7 @@
 from abc import ABC
 from typing import Any, Optional
+
+from select import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Select, delete, MappingResult

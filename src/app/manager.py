@@ -4,7 +4,8 @@ from src.app.routers import (
     user_router,
     candidate_router,
     company_router,
-    auth_router
+    auth_router,
+    admin_router
 )
 from src.core.auth.security import security
 from src.core.config.settings import AppConfig
@@ -24,6 +25,7 @@ def create_app():
     app.include_router(candidate_router.router)
     app.include_router(company_router.router)
     app.include_router(auth_router.router)
+    app.include_router(admin_router.router)
 
     security.handle_errors(app)
 
