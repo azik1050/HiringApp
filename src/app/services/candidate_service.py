@@ -5,6 +5,7 @@ from src.app.repositories.candidate_account_repository import (
     CandidateAccountRepository
 )
 from src.app.repositories.cv_repository import CVRepository
+from src.app.repositories.invitation_repository import InvitationRepository
 from src.app.repositories.job_application_repository import JobApplicationRepository
 from src.app.repositories.user_repository import UserRepository
 from src.app.repositories.vacancy_repository import VacancyRepository
@@ -39,7 +40,8 @@ class CandidateAccountService:
             cv_repo: CVRepository,
             user_repo: UserRepository,
             application_repo: JobApplicationRepository,
-            vacancy_repo: VacancyRepository
+            vacancy_repo: VacancyRepository,
+            invitation_repo: InvitationRepository
     ):
         self.mapper = CandidateAccountServiceMapper()
         self.candidate_repo = candidate_repo
@@ -47,6 +49,7 @@ class CandidateAccountService:
         self.user_repo = user_repo
         self.application_repo = application_repo
         self.vacancy_repo = vacancy_repo
+        self.invitation_repo = invitation_repo
 
     async def create_candidate_account(
             self,
@@ -147,8 +150,9 @@ class CandidateAccountService:
             user_id=user_id,
             vacancy_id=vacancy_id
         )
+        invitation = await self.invitation_repo.get_invitation_by_application_id(application_id=application.id) if application else None
 
         if not vacancy:
             raise HTTPException(status_code=404, detail="Vacancy not found")
 
-        return self.mapper.vacancy(vacancy, application)
+        return self.mapper.vacancy(vacancy, application, invitation)

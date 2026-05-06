@@ -38,7 +38,8 @@ def build_candidate_service(
         cv_repo: CVRepository = Depends(build_cv_repo),
         user_repo: UserRepository = Depends(build_user_repo),
         application_repo: JobApplicationRepository = Depends(build_job_application_repo),
-        vacancy_repo: VacancyRepository = Depends(build_vacancy_repo)
+        vacancy_repo: VacancyRepository = Depends(build_vacancy_repo),
+        invitation_repo: InvitationRepository = Depends(build_invitation_repo),
 ):
     """Returns created CandidateService"""
     return CandidateAccountService(
@@ -46,7 +47,8 @@ def build_candidate_service(
         cv_repo=cv_repo,
         user_repo=user_repo,
         application_repo=application_repo,
-        vacancy_repo=vacancy_repo
+        vacancy_repo=vacancy_repo,
+        invitation_repo=invitation_repo
     )
 
 
