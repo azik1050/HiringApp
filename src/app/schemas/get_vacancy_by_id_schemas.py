@@ -2,10 +2,15 @@ from typing import Optional
 from pydantic import BaseModel
 
 
+class ApplicationResponse(BaseModel):
+    content: str
+
+
 class Application(BaseModel):
     accepted: Optional[bool]
     cover_letter: str
     created_at: str
+    response: Optional[ApplicationResponse]
 
 
 class GetVacancyByIdResponse(BaseModel):
